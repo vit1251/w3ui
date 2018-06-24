@@ -1,7 +1,7 @@
 package w3ui
 
 import "fmt"
-import "html/template"
+import "io"
 
 type Style struct {
 	URL	string
