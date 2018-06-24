@@ -1,4 +1,4 @@
-package widget
+package w3ui
 
 import "strings"
 import "fmt"

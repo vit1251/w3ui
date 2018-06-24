@@ -1,4 +1,4 @@
-package widget
+package w3ui
 
 //          <label for="issue_status_id">Status<span class="required"> *</span></label>
 //          <select class="w3-select w3-border" name="issue.status_id" id="issue_status_id">
