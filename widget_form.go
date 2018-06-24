@@ -27,20 +27,17 @@ func (wf *WidgetForm) AppendInput( input Widget ) {
 func (wf *WidgetForm) Validate() {
 }
 
-func (wf *WidgetForm) Render() ( template.HTML ) {
+func (wf *WidgetForm) Execute(wr io.Writer, data interface{}) error {
 
-	var items []string
-
-	items = append(items, fmt.Sprintf("<form class=\"w3-container\" enctype=\"application/x-www-form-urlencoded\" action=\"%s\" accept-charset=\"utf-8\" method=\"post\">", wf.Action))
+	startForm := fmt.Sprintf("<form class=\"w3-container\" enctype=\"application/x-www-form-urlencoded\" action=\"%s\" accept-charset=\"utf-8\" method=\"post\">", wf.Action)
+	wr.Write( []byte( startForm ) )
 	for _, input := range wf.inputs {
-		//log.Printf("input = %v", input)
-		content := input.Render()
-		str := string(content)
-		items = append(items, str)
+		if err := input.Execute(wr, nil) ; err != nil {
+			return err
+		}
 	}
-	items = append(items, "</form>")
+	stopForm := "</form>"
+	wr.Write( []byte( stopForm ) )
 
-	content := strings.Join(items, "\n")
-
-	return template.HTML(content)
+	return nil
 }
