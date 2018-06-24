@@ -1,7 +1,7 @@
 package w3ui
 
 import "fmt"
-import "html/template"
+import "io"
 
 type WidgetFormInput struct {
 	Name        string
