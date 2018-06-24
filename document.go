@@ -11,10 +11,6 @@ type JavaScript struct {
 	URL	string
 }
 
-type Node struct {
-	cc	*ComponentContent
-}
-
 func NewStyle(URL string) (*Style) {
 	s := &Style{
 		URL: URL,
@@ -30,13 +26,13 @@ func NewJavaScript(URL string) (*JavaScript) {
 }
 
 type DocumentHead struct {
-	Title string
-	Styles []Style
-	JavaScripts []JavaScript
+	title string
+	styles []Style
+	javaScripts []JavaScript
 }
 
 type DocumentBody struct {
-	Nodes	[]Node
+	widget  Widget
 }
 
 type Document struct {
@@ -60,19 +56,20 @@ func (doc *Document) Debug(writeDebugComment bool) {
 	doc.writeDebugComment = writeDebugComment
 }
 
+func (h *DocumentHead) Title(title string) {
+	h.title = title
+}
+
+func (doc *Document) Title(title string) {
+	doc.Head.title = title
+}
+
 func (h *DocumentHead) AddStyle(s Style) {
-	h.Styles = append(h.Styles, s)
+	h.styles = append(h.styles, s)
 }
 
 func (h *DocumentHead) AddJavaScript(js JavaScript) {
-	h.JavaScripts = append(h.JavaScripts, js)
-}
-
-func (b *DocumentBody) AddNode(cc *ComponentContent) {
-	node := Node{
-		cc: cc,
-	}
-	b.Nodes = append(b.Nodes, node)
+	h.javaScripts = append(h.javaScripts, js)
 }
 
 func (doc *Document) writeCharset(wr io.Writer) error {
@@ -97,6 +94,14 @@ func (doc *Document) writeTitle(wr io.Writer) error {
 func (doc *Document) writeBody(wr io.Writer) error {
 
 	wr.Write( []byte( "<body>\n" ) )
+
+	if doc.widget != nil {
+		doc.widget.Execute(wr, nil)
+	} else {
+		wr.Write( []byte("    <h1>Ooops...</h1>\n") )
+		wr.Write( []byte("    \n") )
+		wr.Write( []byte("    <p>View does not contain main widget.</p>\n") )
+	}
 
 	wr.Write( []byte( "</body>\n" ) )
 
