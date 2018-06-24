@@ -27,7 +27,8 @@ func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error {
 	}
 
 	/* Create reader and copy content */
-	reader := bytes.NewReader(w.buffer)
+	b := w.buffer.Bytes()
+	reader := bytes.NewReader( b )
 	if _, err := io.Copy(wr, reader) ; err != nil {
 		return err
 	}
