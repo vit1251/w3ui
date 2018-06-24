@@ -1,9 +1,7 @@
 package w3ui
 
-import "strings"
+import "io"
 import "fmt"
-import "html/template"
-
 
 type WidgetForm struct {
 
