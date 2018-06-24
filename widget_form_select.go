@@ -1,13 +1,7 @@
 package w3ui
 
-//          <label for="issue_status_id">Status<span class="required"> *</span></label>
-//          <select class="w3-select w3-border" name="issue.status_id" id="issue_status_id">
-//            <option selected="selected" value="1">New</option>
-//          </select>
-
-
 import "fmt"
-import "html/template"
+import "io"
 
 type WidgetFormSelect struct {
 	Name string
@@ -30,16 +24,54 @@ func (ws *WidgetFormSelect) AddOption(name string, value string) {
 	ws.Options[value] = name
 }
 
-func (ws *WidgetFormSelect) Render() template.HTML {
+//
+func (widgetFormSelect *WidgetFormSelect) writeLabel(wr io.Writer) error {
 
-	var content string
+//	content := fmt.Sprintf("<label for=\"\"></label>")
+	wr.Write( []byte("<label for=\"\"></label>") )
 
-	content += fmt.Sprintf("<label for></label>")
-	content += fmt.Sprintf("<select name=\"%s\">", ws.Name)
-	for name, value := range ws.Options {
-		content += fmt.Sprintf("<option value=\"%s\">%s</option>", value, name)
+	return nil
+}
+
+func (widgetFormSelect *WidgetFormSelect) writeStartSelect(wr io.Writer) error {
+
+	content := fmt.Sprintf("<select name=\"%s\">", widgetFormSelect.Name)
+	wr.Write( []byte(content) )
+
+	return nil
+}
+
+func (widgetFormSelect *WidgetFormSelect) writeStopSelect(wr io.Writer) error {
+
+	content := "</select>"
+	wr.Write( []byte(content) )
+
+	return nil
+}
+
+
+func (widgetFormSelect *WidgetFormSelect) Execute(wr io.Writer, data interface{}) error {
+
+	/* Write label */
+	if err := widgetFormSelect.writeLabel(wr) ; err != nil {
+		return err
 	}
-	content += "</select>"
 
-	return template.HTML(content)
+	/* Write start select */
+	if err := widgetFormSelect.writeStartSelect(wr) ; err != nil {
+		return err
+	}
+
+	/* Write option */
+	for name, value := range widgetFormSelect.Options {
+		content := fmt.Sprintf("<option value=\"%s\">%s</option>", value, name)
+		wr.Write( []byte(content) )
+	}
+
+	/* Write stop select */
+	if err := widgetFormSelect.writeStopSelect(wr) ; err != nil {
+		return err
+	}
+
+	return nil
 }

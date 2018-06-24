@@ -40,6 +40,7 @@ type Document struct {
 
 }
 
+// NewDocument provide new document ready for execute and write
 func NewDocument() (*Document, error) {
 	doc := &Document{
 		writeDebugComment: false,

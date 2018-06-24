@@ -1,7 +1,7 @@
 package w3ui
 
 import "fmt"
-import "html/template"
+import "io"
 
 type WidgetFormSubmit struct {
 	Value string
@@ -16,13 +16,14 @@ func (w *WidgetFormSubmit) SetValue(value string) {
 	w.Value = value
 }
 
-func (i *WidgetFormSubmit) Render() template.HTML {
+func (widgetFormSubmit *WidgetFormSubmit) Execute(wr io.Writer, data interface{}) error {
 
-	var content string
+	wr.Write( []byte( "<p>" ) )
 
-	content += "<p>"
-	content += fmt.Sprintf("<input type=\"submit\" value=\"%s\" class=\"w3-button w3-padding w3-orange\" />", i.Value)
-	content += "</p>"
+	content := fmt.Sprintf("<input type=\"submit\" value=\"%s\" class=\"w3-button w3-padding w3-orange\" />", i.Value)
+	wr.Write( []byte( content ) )
 
-	return template.HTML(content)
+	wr.Write( []byte( "</p>" ) )
+
+	return nil
 }

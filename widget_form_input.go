@@ -10,7 +10,7 @@ type WidgetFormInput struct {
 	Class       string
 	Label       string
 	Id          string
-	Required    bool
+	required    bool
 	Help        string
 
 	validate func(value string) bool
@@ -38,7 +38,7 @@ func (w *WidgetFormInput) SetLabel(label string) {
 }
 
 func (w *WidgetFormInput) SetRequired(required bool) {
-	w.Required = required
+	w.required = required
 }
 
 func (w *WidgetFormInput) SetPlaceholder(placeholder string) {
@@ -49,21 +49,47 @@ func (w *WidgetFormInput) SetValue(value string) {
 	w.Value = value
 }
 
-func (i *WidgetFormInput) Render() template.HTML {
+func (widgetFormInput *WidgetFormInput) writeLabel(wr io.Writer) error {
 
-	var content string
+//	if widgetFormInput.required {
+//		Label += "<span class=\"required\"> *</span>"
+//	}
+//	content = fmt.Sprintf("<label for=\"%s\">%s</label>", i.Id, Label)
 
-	content += "<p>"
-	var Label string = i.Label
-	if i.Required {
-		Label += "<span class=\"required\"> *</span>"
+	return nil
+
+}
+
+// 
+func (widgetFormInput *WidgetFormInput) writeHelp(wr io.Writer) error {
+
+	if widgetFormInput.Help != "" {
+		content := fmt.Sprintf("<em class=\"info\">%s</em>", widgetFormInput.Help)
+		wr.Write( []byte( content ) )
 	}
-	content += fmt.Sprintf("<label for=\"%s\">%s</label>", i.Id, Label)
-	content += fmt.Sprintf("<input class=\"w3-input w3-border\" type=\"text\" value=\"%s\" name=\"%s\" id=\"%s\" placeholder=\"%s\" />", i.Value, i.Name, i.Id, i.Placeholder)
-	if i.Help != "" {
-		content += fmt.Sprintf("<em class=\"info\">%s</em>", i.Help)
-	}
-	content += "</p>"
 
-	return template.HTML(content)
+	return nil
+}
+
+func (widgetFormInput *WidgetFormInput) Execute(wr io.Writer, data interface{}) error {
+
+	wr.Write( []byte( "<p>" ) )
+
+	/* Write message */
+	if err := widgetFormInput.writeLabel(wr) ; err != nil {
+		return err
+	}
+
+	/* Write input */
+	content := fmt.Sprintf("<input class=\"w3-input w3-border\" type=\"text\" value=\"%s\" name=\"%s\" id=\"%s\" placeholder=\"%s\" />", i.Value, i.Name, i.Id, i.Placeholder)
+	wr.Write( []byte( content ) )
+
+	/* Write help */
+	if err := widgetFormInput.writeHelp(wr) ; err != nil {
+		return err
+	}
+
+	wr.Write( []byte( "</p>" ) )
+
+	return nil
 }
