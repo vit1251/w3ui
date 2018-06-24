@@ -19,7 +19,7 @@ func (w *WidgetContent) Write(content []byte) {
 	w.writer.Write(content)
 }
 
-func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error
+func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error {
 	if err := w.writer.Flush(); err != nil {
 		return err
 	}
