@@ -1,19 +1,28 @@
 package w3ui
 
-import "html/template"
+import "io"
+import "bytes"
+import "bufio"
 
 type WidgetContent struct {
-	Content string
+	buffer  bytes.Buffer
+	writer  bufio.Writer
 }
 
-func NewWidgetContent() (*WidgetContent, error) {
-	return &WidgetContent{}, nil
+func NewWidgetContent() (*WidgetContent) {
+	widgetContent := &WidgetContent{
+	}
+	return widgetContent
 }
 
-func (w *WidgetContent) SetContent(content string) {
-	w.Content = content
+func (w *WidgetContent) Write(content []byte) {
+	w.writer.Write(content)
 }
 
-func (w *WidgetContent) Render() template.HTML {
-	return template.HTML(w.Content)
+func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error
+	if err := w.writer.Flush(); err != nil {
+		return err
+	}
+	io.Copy(wr, w.buffer)
+	return nil
 }

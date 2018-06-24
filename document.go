@@ -40,13 +40,24 @@ type DocumentBody struct {
 }
 
 type Document struct {
-    Head DocumentHead
-    Body DocumentBody
+
+	Head DocumentHead
+	Body DocumentBody
+
+	writeDebugComment bool
+
 }
 
 func NewDocument() (*Document, error) {
-	doc := &Document{}
+	doc := &Document{
+		debug: false,
+	}
 	return doc, nil
+}
+
+// Debug enable or disable debug page output
+func (doc *Document) Debug(writeDebugComment bool) {
+	doc.writeDebugComment = writeDebugComment
 }
 
 func (h *DocumentHead) AddStyle(s Style) {
@@ -64,37 +75,111 @@ func (b *DocumentBody) AddNode(cc *ComponentContent) {
 	b.Nodes = append(b.Nodes, node)
 }
 
-func (doc *Document) Content() (template.HTML, error) {
+func (doc *Document) writeCharset(wr io.Writer) error {
 
-	var body string
+	charset := fmt.Sprintf("    <meta charset=\"%s\">\n", "utf-8")
 
-	body += "<!DOCTYPE html>\n"
-	body += "<html>\n"
-	body += "<head>\n"
-	body += fmt.Sprintf("\t<meta charset=\"%s\">\n", "utf-8")
-	body += "\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\">\n"
-	body += fmt.Sprintf("\t<title>%s</title>\n", doc.Head.Title)
+	wr.Write( []byte( charset ) )
 
-	// Step 1. Pack CSS styles
-	for _, s := range doc.Head.Styles {
-		link := fmt.Sprintf("\t<link rel=\"stylesheet\" href=\"%s\">\n", s.URL)
-		body += link
+	return nil
+
+}
+
+func (doc *Document) writeTitle(wr io.Writer) error {
+
+	contentTitle := fmt.Sprintf("    <title>%s</title>\n", doc.Head.Title )
+
+	wr.Write( []byte( contentTitle ) )
+
+	return nil
+}
+
+func (doc *Document) writeBody(wr io.Writer) error {
+
+	wr.Write( []byte( "<body>\n" ) )
+
+	wr.Write( []byte( "</body>\n" ) )
+
+	return nil
+}
+
+// writeDebug write duration page render
+func (doc *Document) writeDebug(wr io.Writer) error {
+
+	if doc.writeDebugComment {
+
+		duration := 0.0
+
+		debugMessage := fmt.Sprintf("<!-- Page generation %f sec. -->\n", duration)
+		wr.Write( []byte( debugMessage ) )
+
 	}
-	// Step 2. Pack JavaScript
+
+	return nil
+}
+
+// writeMeta provide page meta information attributes
+func (doc *Document) writeMeta(wr io.Writer) error {
+
+	wr.Write( []byte( "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\">\n" ) )
+
+	return nil
+}
+
+func (doc *Document) writeHead(wr io.Writer) error {
+
+	wr.Write( []byte( "<head>\n" ) )
+
+	if err := doc.writeCharset( wr ) ; err != nil {
+		return err
+	}
+
+	if err := doc.writeMeta( wr ) ; err != nil {
+		return err
+	}
+
+	if err := doc.writeTitle( wr ) ; err != nil {
+		return err
+	}
+
+	/* Write CSS styles */
+	for _, s := range doc.Head.Styles {
+		link := fmt.Sprintf("    <link rel=\"stylesheet\" href=\"%s\">\n", s.URL)
+		wr.Write( []byte( link ) )
+	}
+	/* Write JavaScript section */
 	for _, js := range doc.Head.JavaScripts {
 		script := fmt.Sprintf("\t<script src=\"%s\"></script>\n", js.URL)
-		body += script
+		wr.Write( []byte( script ) )
 	}
 
-	body += "</head>\n"
-	body += "<body>\n"
-	// Step 3. Pack component
-	for _, node := range doc.Body.Nodes {
-		body += fmt.Sprintf( "%s", node.cc.Content() )
-	}
-	body += "</body>\n"
-	body += "</html>\n"
+	wr.Write( []byte( "</head>\n" ) )
 
-	return template.HTML(body), nil
+	return nil
+}
+
+func (doc *Document) Execute(wr io.Writer, data interface{}) error {
+
+	wr.Write( []byte( "<!DOCTYPE html>\n" ) )
+	wr.Write( []byte( "<html>\n" ) )
+
+	/* Write HEAD content section */
+	if err := doc.writeHead( wr ) ; err != nil {
+		return err
+	}
+
+	/* Write BODY content section */
+	if err := doc.writeBody( wr ) ; err != nil {
+		return err
+	}
+
+	wr.Write( []byte( "</html>\n" ) )
+
+	/* Write debug metrics */
+	if err := doc.writeDebug( wr ) ; err != nil {
+		return err
+	}
+
+	return nil
 
 }
