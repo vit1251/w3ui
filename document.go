@@ -25,28 +25,24 @@ func NewJavaScript(URL string) (*JavaScript) {
 	return js
 }
 
-type DocumentHead struct {
+type Document struct {
+
+	/* Docuemnt HEAD section */
 	title string
 	styles []Style
 	javaScripts []JavaScript
-}
 
-type DocumentBody struct {
+	/* Document BODY section */
 	widget  Widget
-}
 
-type Document struct {
-
-	Head DocumentHead
-	Body DocumentBody
-
+	/* Other options */
 	writeDebugComment bool
 
 }
 
 func NewDocument() (*Document, error) {
 	doc := &Document{
-		debug: false,
+		writeDebugComment: false,
 	}
 	return doc, nil
 }
@@ -56,20 +52,16 @@ func (doc *Document) Debug(writeDebugComment bool) {
 	doc.writeDebugComment = writeDebugComment
 }
 
-func (h *DocumentHead) Title(title string) {
-	h.title = title
-}
-
 func (doc *Document) Title(title string) {
 	doc.Head.title = title
 }
 
-func (h *DocumentHead) AddStyle(s Style) {
-	h.styles = append(h.styles, s)
+func (doc *Document) AddStyle(s Style) {
+	doc.styles = append(doc.styles, s)
 }
 
-func (h *DocumentHead) AddJavaScript(js JavaScript) {
-	h.javaScripts = append(h.javaScripts, js)
+func (doc *Document) AddJavaScript(js JavaScript) {
+	doc.javaScripts = append(doc.javaScripts, js)
 }
 
 func (doc *Document) writeCharset(wr io.Writer) error {
@@ -84,7 +76,7 @@ func (doc *Document) writeCharset(wr io.Writer) error {
 
 func (doc *Document) writeTitle(wr io.Writer) error {
 
-	contentTitle := fmt.Sprintf("    <title>%s</title>\n", doc.Head.Title )
+	contentTitle := fmt.Sprintf("    <title>%s</title>\n", doc.title )
 
 	wr.Write( []byte( contentTitle ) )
 
@@ -96,11 +88,15 @@ func (doc *Document) writeBody(wr io.Writer) error {
 	wr.Write( []byte( "<body>\n" ) )
 
 	if doc.widget != nil {
+
 		doc.widget.Execute(wr, nil)
+
 	} else {
+
 		wr.Write( []byte("    <h1>Ooops...</h1>\n") )
 		wr.Write( []byte("    \n") )
 		wr.Write( []byte("    <p>View does not contain main widget.</p>\n") )
+
 	}
 
 	wr.Write( []byte( "</body>\n" ) )
@@ -148,12 +144,12 @@ func (doc *Document) writeHead(wr io.Writer) error {
 	}
 
 	/* Write CSS styles */
-	for _, s := range doc.Head.Styles {
+	for _, s := range doc.styles {
 		link := fmt.Sprintf("    <link rel=\"stylesheet\" href=\"%s\">\n", s.URL)
 		wr.Write( []byte( link ) )
 	}
 	/* Write JavaScript section */
-	for _, js := range doc.Head.JavaScripts {
+	for _, js := range doc.javaScripts {
 		script := fmt.Sprintf("\t<script src=\"%s\"></script>\n", js.URL)
 		wr.Write( []byte( script ) )
 	}
