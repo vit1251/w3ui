@@ -23,6 +23,7 @@ func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error {
 	if err := w.writer.Flush(); err != nil {
 		return err
 	}
-	io.Copy(wr, w.buffer)
+	reader := NewReader(w.buffer)
+	io.Copy(wr, reader)
 	return nil
 }
