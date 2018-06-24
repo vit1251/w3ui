@@ -53,7 +53,7 @@ func (doc *Document) Debug(writeDebugComment bool) {
 }
 
 func (doc *Document) Title(title string) {
-	doc.Head.title = title
+	doc.title = title
 }
 
 func (doc *Document) AddStyle(s Style) {
