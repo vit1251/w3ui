@@ -5,31 +5,31 @@ import "html/template"
 
 type WidgetHeader struct {
 
-	Label string
-	Level uint8
+	label string
+	level uint8
 
 }
 
 func NewWidgetHeader() (*WidgetHeader, error) {
 	w := &WidgetHeader{
-		Level: 1,
+		level: 1,
 	}
 	return w, nil
 }
 
 func (w *WidgetHeader) SetLevel(level uint8) {
-	w.Level = level
+	w.level = level
 }
 
 func (w *WidgetHeader) SetLabel(label string) {
-	w.Label = label
+	w.label = label
 }
 
-func (w *WidgetHeader) Render() template.HTML {
+func (w *WidgetHeader) Execute(wr io.Writer, data interface{}) error {
 
-	var content string
+	content := fmt.Sprintf("<h%d>%s</h%d>", w.level, w.label, w.level)
+	wr.Write( []byte(content) )
 
-	content += fmt.Sprintf("<h%d>%s</h%d>", w.Level, w.Label, w.Level)
+	return nil
 
-	return template.HTML(content)
 }

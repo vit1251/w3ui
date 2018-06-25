@@ -45,20 +45,24 @@ func (w *WidgetFormTextarea) SetValue(value string) {
 	w.Value = value
 }
 
-func (i *WidgetFormTextarea) Render() template.HTML {
+func (i *WidgetFormTextarea) Execute(wr io.Writer, data interface{}) error {
 
-	var content string
+	wr.Write( []byte( "<p>" ) )
 
-	content += "<p>"
+	content1 := fmt.Sprintf("<label for=\"%s\">%s</label>", i.Id, i.Label)
+	wr.Write( []byte( content1 ) )
 
-	content += fmt.Sprintf("<label for=\"%s\">%s</label>", i.Id, i.Label)
-	content += fmt.Sprintf("<textarea class=\"w3-input w3-border\" rows=\"8\" name=\"%s\" id=\"%s\">%s</textarea>", i.Name, i.Id, i.Value)
+	content2 := fmt.Sprintf("<textarea class=\"w3-input w3-border\" rows=\"8\" name=\"%s\" id=\"%s\">%s</textarea>", i.Name, i.Id, i.Value)
+	wr.Write( []byte( content2 ) )
 
+	/* Write help */
 	if i.Help != "" {
-		content += fmt.Sprintf("<em class=\"info\">%s</em>", i.Help)
+		content3 := fmt.Sprintf("<em class=\"info\">%s</em>", i.Help)
+		wr.Write( []byte( content3 ) )
 	}
-	content += "</p>"
 
-	return template.HTML(content)
+	wr.Write( []byte( "<p>" ) )
+
+	return nil
 
 }
