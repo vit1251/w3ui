@@ -1,5 +1,6 @@
 package w3ui
 
+import "time"
 import "fmt"
 import "io"
 
@@ -37,6 +38,8 @@ type Document struct {
 
 	/* Other options */
 	writeDebugComment bool
+	startTime         time.Time
+	stopTime          time.Time
 
 }
 
@@ -44,6 +47,8 @@ type Document struct {
 func NewDocument() (*Document, error) {
 	doc := &Document{
 		writeDebugComment: false,
+		startTime: time.Now(),
+		stopTime: time.Now(),
 	}
 	return doc, nil
 }
@@ -115,9 +120,9 @@ func (doc *Document) writeDebug(wr io.Writer) error {
 
 	if doc.writeDebugComment {
 
-		duration := 0.0
+		elapsed := time.Since(doc.startTime)
 
-		debugMessage := fmt.Sprintf("<!-- Page generation %f sec. -->\n", duration)
+		debugMessage := fmt.Sprintf("<!-- Page generation %f sec. -->\n", elapsed)
 		wr.Write( []byte( debugMessage ) )
 
 	}
