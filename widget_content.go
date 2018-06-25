@@ -6,7 +6,7 @@ import "bufio"
 
 type WidgetContent struct {
 	buffer   bytes.Buffer
-	writer  *io.Writer
+	writer   io.Writer
 }
 
 func NewWidgetContent() (*WidgetContent) {
