@@ -21,7 +21,7 @@ func (widgetFormSubmit *WidgetFormSubmit) Execute(wr io.Writer, data interface{}
 	wr.Write( []byte( "<p>" ) )
 
 	content := fmt.Sprintf("<input type=\"submit\" value=\"%s\" class=\"w3-button w3-padding w3-orange\" />",
-			widgetFormSubmit.Value
+			widgetFormSubmit.Value,
 		)
 	wr.Write( []byte( content ) )
 
