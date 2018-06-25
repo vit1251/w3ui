@@ -23,9 +23,9 @@ func (w *WidgetContent) Write(content []byte) {
 func (w *WidgetContent) Execute(wr io.Writer, data interface{}) error {
 
 	/* Complete buffer write */
-	if err := w.writer.Flush(); err != nil {
-		return err
-	}
+//	if err := w.writer.Flush(); err != nil {
+//		return err
+//	}
 
 	/* Create reader and copy content */
 	b := w.buffer.Bytes()
