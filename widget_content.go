@@ -12,6 +12,7 @@ type WidgetContent struct {
 func NewWidgetContent() (*WidgetContent) {
 	widgetContent := &WidgetContent{
 	}
+	widgetContent.writer = bufio.Writer(widgetContent.buffer)
 	return widgetContent
 }
 
