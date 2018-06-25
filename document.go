@@ -122,7 +122,7 @@ func (doc *Document) writeDebug(wr io.Writer) error {
 
 		elapsed := time.Since(doc.startTime)
 
-		debugMessage := fmt.Sprintf("<!-- Page generation %f sec. -->\n", elapsed)
+		debugMessage := fmt.Sprintf("<!-- Page generation %q -->\n", elapsed)
 		wr.Write( []byte( debugMessage ) )
 
 	}
