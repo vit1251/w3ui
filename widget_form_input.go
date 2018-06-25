@@ -81,7 +81,12 @@ func (widgetFormInput *WidgetFormInput) Execute(wr io.Writer, data interface{}) 
 	}
 
 	/* Write input */
-	content := fmt.Sprintf("<input class=\"w3-input w3-border\" type=\"text\" value=\"%s\" name=\"%s\" id=\"%s\" placeholder=\"%s\" />", i.Value, i.Name, i.Id, i.Placeholder)
+	content := fmt.Sprintf("<input class=\"w3-input w3-border\" type=\"text\" value=\"%s\" name=\"%s\" id=\"%s\" placeholder=\"%s\" />",
+			widgetFormInput.Value,
+			widgetFormInput.Name,
+			widgetFormInput.Id,
+			widgetFormInput.Placeholder
+		)
 	wr.Write( []byte( content ) )
 
 	/* Write help */
