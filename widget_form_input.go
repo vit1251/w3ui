@@ -85,7 +85,7 @@ func (widgetFormInput *WidgetFormInput) Execute(wr io.Writer, data interface{}) 
 			widgetFormInput.Value,
 			widgetFormInput.Name,
 			widgetFormInput.Id,
-			widgetFormInput.Placeholder
+			widgetFormInput.Placeholder,
 		)
 	wr.Write( []byte( content ) )
 
