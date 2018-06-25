@@ -1,6 +1,6 @@
 package w3ui
 
-import "html/template"
+import "io"
 import "fmt"
 
 type WidgetFormTextarea struct {
