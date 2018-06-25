@@ -5,13 +5,12 @@ import "bytes"
 import "bufio"
 
 type WidgetContent struct {
-	buffer   bytes.Buffer
-	writer   bufio.Writer
+	buffer    bytes.Buffer
+	writer   *bufio.Writer
 }
 
 func NewWidgetContent() (*WidgetContent) {
-	widgetContent := &WidgetContent{
-	}
+	widgetContent := &WidgetContent{}
 	widgetContent.writer = bufio.NewWriter(&widgetContent.buffer)
 	return widgetContent
 }
