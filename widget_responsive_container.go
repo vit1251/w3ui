@@ -6,13 +6,13 @@ type WidgetResponsiveContainer struct {
 	rows []Widget
 }
 
-func NewWidgetResponsiveContainer() (*WidgetContainer) {
+func NewWidgetResponsiveContainer() (*WidgetResponsiveContainer) {
 	newWidget := &WidgetResponsiveContainer{}
 	return newWidget
 }
 
-func (w *WidgetResponsiveContainer) AddRow(w Widget) {
-	w.rows = append(w.rows, w)
+func (w *WidgetResponsiveContainer) AddRow(widget Widget) {
+	w.rows = append(w.rows, widget)
 }
 
 func (w WidgetResponsiveContainer) Execute(wr io.Writer, data interface{}) error {
