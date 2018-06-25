@@ -48,6 +48,11 @@ func NewDocument() (*Document, error) {
 	return doc, nil
 }
 
+// Widget provide set access
+func (doc *Document) Widget(widget Widget) {
+	doc.widget = widget
+}
+
 // Debug enable or disable debug page output
 func (doc *Document) Debug(writeDebugComment bool) {
 	doc.writeDebugComment = writeDebugComment
