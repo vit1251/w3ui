@@ -75,7 +75,7 @@ func (doc *Document) AddJavaScript(js JavaScript) {
 	doc.javaScripts = append(doc.javaScripts, js)
 }
 
-func (doc *Document) writeCharset(wr io.Writer) error {
+func (doc *Document) writeCharset(wr io.Writer, data interface{}) error {
 
 	charset := fmt.Sprintf("    <meta charset=\"%s\">\n", "utf-8")
 
@@ -85,7 +85,7 @@ func (doc *Document) writeCharset(wr io.Writer) error {
 
 }
 
-func (doc *Document) writeTitle(wr io.Writer) error {
+func (doc *Document) writeTitle(wr io.Writer, data interface{}) error {
 
 	contentTitle := fmt.Sprintf("    <title>%s</title>\n", doc.title )
 
@@ -94,13 +94,13 @@ func (doc *Document) writeTitle(wr io.Writer) error {
 	return nil
 }
 
-func (doc *Document) writeBody(wr io.Writer) error {
+func (doc *Document) writeBody(wr io.Writer, data interface{}) error {
 
 	wr.Write( []byte( "<body>\n" ) )
 
 	if doc.widget != nil {
 
-		doc.widget.Execute(wr, nil)
+		doc.widget.Execute(wr, data)
 
 	} else {
 
@@ -116,7 +116,7 @@ func (doc *Document) writeBody(wr io.Writer) error {
 }
 
 // writeDebug write duration page render
-func (doc *Document) writeDebug(wr io.Writer) error {
+func (doc *Document) writeDebug(wr io.Writer, data interface{}) error {
 
 	if doc.writeDebugComment {
 
@@ -131,26 +131,26 @@ func (doc *Document) writeDebug(wr io.Writer) error {
 }
 
 // writeMeta provide page meta information attributes
-func (doc *Document) writeMeta(wr io.Writer) error {
+func (doc *Document) writeMeta(wr io.Writer, data interface{}) error {
 
 	wr.Write( []byte( "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\">\n" ) )
 
 	return nil
 }
 
-func (doc *Document) writeHead(wr io.Writer) error {
+func (doc *Document) writeHead(wr io.Writer, data interface{}) error {
 
 	wr.Write( []byte( "<head>\n" ) )
 
-	if err := doc.writeCharset( wr ) ; err != nil {
+	if err := doc.writeCharset( wr, data ) ; err != nil {
 		return err
 	}
 
-	if err := doc.writeMeta( wr ) ; err != nil {
+	if err := doc.writeMeta( wr, data ) ; err != nil {
 		return err
 	}
 
-	if err := doc.writeTitle( wr ) ; err != nil {
+	if err := doc.writeTitle( wr, data ) ; err != nil {
 		return err
 	}
 
@@ -176,19 +176,19 @@ func (doc *Document) Execute(wr io.Writer, data interface{}) error {
 	wr.Write( []byte( "<html>\n" ) )
 
 	/* Write HEAD content section */
-	if err := doc.writeHead( wr ) ; err != nil {
+	if err := doc.writeHead( wr, data ) ; err != nil {
 		return err
 	}
 
 	/* Write BODY content section */
-	if err := doc.writeBody( wr ) ; err != nil {
+	if err := doc.writeBody( wr, data ) ; err != nil {
 		return err
 	}
 
 	wr.Write( []byte( "</html>\n" ) )
 
 	/* Write debug metrics */
-	if err := doc.writeDebug( wr ) ; err != nil {
+	if err := doc.writeDebug( wr, data ) ; err != nil {
 		return err
 	}
 
